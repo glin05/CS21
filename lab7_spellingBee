@@ -1,0 +1,164 @@
+"""
+Create your top-down design for the spelling game here.
+
+Your top-down design should meet the following requirements:
+- main should be completely written
+- main should call the functions that you create in your design
+- all functions must be stubbed out with purpose, parameters, and return
+- your program should run without syntax errors
+
+Once your design is complete, send an email to tdd@cs.swarthmore.edu and
+be sure to copy both partners on the email.
+
+Authors: Gina Lin and Eric Xing
+Date: 03/18/2025
+Lab section: (delete the 3 that do not apply) T2:45
+"""
+from random import choice
+
+def open_file(file_name):
+    """
+    Reads the given file and returns each line as a list of lists
+
+    Parameter: 
+    none
+
+    Returns:
+    list of strings, where each string is from a line of the file
+    """
+    fp = open(file_name, 'r')
+    words = []
+    for line in fp:
+        line = line.strip()
+        words.append(line)
+    fp.close()
+    return words
+
+def print_puzzle(puzzle):
+    """
+    Prints the puzzle corresponding to the given set of letters, with the
+    middle letter being in the center
+
+    Parameter:
+    puzzle (str): all of the letters in the puzzle (first letter is center)
+
+    Returns:
+    none
+
+    Side Effects:
+    Prints the puzzle
+    """
+    print("  " + puzzle[1]+ "  " + puzzle[2])
+    print(puzzle[3]+ "  " + puzzle[0] + "  " + puzzle[4])
+    print("  " + puzzle[5] + "  " + puzzle[6])
+
+
+def word_check(puzzle, word, guessed, dictionary):
+    """
+    Checks a word inputted by the user to see if it is a valid and new guess.
+    Prints different messages depending on how the word is invalid.
+    Appends new words to guessed list and is printed out.
+
+    Parameters:
+    puzzle (str): all of the letters in the puzzle (first letter is center)
+    word (str): word that the user inputted
+    guessed (list): words that the user has already gotten
+    dictionary (list): words that are considered valid 
+
+    Returns:
+    Boolean: True if the word is valid and new and False otherwise
+
+    """
+
+    center = puzzle[0]
+    if center not in word: 
+        print("Center letter not contained in word.") 
+        return False
+    if len(word) < 4:
+        print("Word needs to be at least 4 letters long.")
+        return False
+    if word not in dictionary:
+        print("Word not contained in dictionary.")
+        return False
+    if word in guessed: 
+        print("Word already guessed.")
+        return False
+
+    guessed.append(word)
+    return True
+        
+    
+
+
+def calc_value(word, puzzle):
+    """
+    Calculates the score corresponding to the word.
+
+    Parameters:
+    word (str): word that the user inputted
+    puzzle (str): all of the letters in the puzzle (first letter is center)
+
+    Returns:
+    The calculated score corresponding to user input.
+    """
+    points = 0
+    # each 4 letter word is 1 pt
+    if len(word) == 4:
+        points = 1
+         
+    # an adiitonal letter is 1pt/letter 
+    if len(word) > 4:
+        for letter in word:
+            points = len(word)
+
+        in_word = True
+        for letter in puzzle: 
+            if letter not in word:
+                in_word = False 
+        if in_word == True:
+                points = len(word) + 7
+                print("!!!!!!!!!! Pangram !!!!!!!!!!")
+    # print()
+    print("%s : +%d points" % (word,points))
+    return points 
+
+def main():
+    """
+    Stub assumes that the player inputs "clove" the first time and inputs 
+    end the second time. 
+    """
+    print("Welcome to Spelling Bee!")
+    print()
+    print("Here is your puzzle: ")
+    board_list = open_file('/data/cs21/bee/miniboards.txt')
+    random_puzzle = choice(board_list)
+    dictionary = open_file('/data/cs21/bee/words.txt')
+    score = 0
+    guessed = []
+    
+    game = True
+    while game:
+        print()
+        print_puzzle(random_puzzle)
+        print()
+        word = input("Type a word or END to quit: ")
+        word = word.upper()
+        if word == "END":
+            game = False
+            print("")
+            print("You earned %d points!" % (score))
+
+        if game: 
+            is_word_new = word_check(random_puzzle, word, guessed, dictionary)
+            if is_word_new:
+                score += calc_value(word, random_puzzle)
+            else:
+                print()
+            print("Current score is: " + str(score))
+            print("You've found the follow words so far: ")
+            display_words = ""
+            for item in guessed:
+                display_words += item + " "
+            print(display_words)
+if __name__ == '__main__':
+    main()
