@@ -1,0 +1,117 @@
+"""
+Create your top-down design for the spelling game here.
+
+Your top-down design should meet the following requirements:
+- main should be completely written
+- main should call the functions that you create in your design
+- all functions must be stubbed out with purpose, parameters, and return
+- your program should run without syntax errors
+
+Once your design is complete, send an email to tdd@cs.swarthmore.edu and
+be sure to copy both partners on the email.
+
+Authors: Gina Lin and Eric Xing
+Date: 03/18/2025
+Lab section: (delete the 3 that do not apply) T2:45
+"""
+from random import choice
+
+def open_file(file_name):
+    """
+    Reads the given file and returns each line as a list of lists
+
+    Parameter: 
+    * file_name (str): name of the file 
+
+    Returns:
+    list of strings, where each string is from a line of the file
+    """
+    # print("In open_file")
+    # return ["CEILOTV", "YADEGRT", "AEFIQRU"]
+    
+
+def print_puzzle(puzzle):
+    """
+    Prints the puzzle corresponding to the given set of letters, with the
+    middle letter being in the center
+
+    Parameter:
+    puzzle (str): all of the letters in the puzzle (first letter is center)
+
+    Returns:
+    none
+
+    Side Effects:
+    Prints the puzzle
+    """
+    print("in print_puzzle")
+    print("  E   I")
+    print("L   C   O")
+    print("  T   V")
+
+
+
+def word_check(puzzle, word, guessed):
+    """
+    Checks a word inputted by the user to see if it is a valid and new guess.
+    Prints different messages depending on how the word is invalid.
+    Appends new words to guessed list and is printed out.
+
+    Parameters:
+    puzzle (str): all of the letters in the puzzle (first letter is center)
+    word (str): word that the user inputted
+    guessed (list): words that the user has already gotten
+
+    Returns:
+    Boolean: True if the word is valid and new and False otherwise
+
+    """
+    print("in word_check")
+    print("is valid ")
+    return True
+
+def calc_value(word, puzzle):
+    """
+    Calculates the score corresponding to the word.
+
+    Parameters:
+    word (str): word that the user inputted
+    puzzle (str): all of the letters in the puzzle (first letter is center)
+
+    Returns:
+    The calculated score corresponding to user input.
+    """
+    print("In calc_value")
+    return 5
+
+def main():
+    """
+    Stub assumes that the player inputs "clove" the first time and inputs 
+    end the second time. 
+    """
+    print("Welcome to Spelling Bee!")
+    print()
+    print("Here is your puzzle: ")
+    board_list = open_file("miniboards file")
+    random_puzzle = choice(board_list)
+    random_puzzle = "CEILOTV"
+    score = 0
+    guessed = []
+    
+    game = True
+    while game:
+        print_puzzle(random_puzzle)
+        word = input("Type a word or END to quit: ")
+        word = word.upper()
+        if word == "END":
+            game = False
+
+        if game: 
+            is_word_new = word_check(random_puzzle, word, guessed)
+            score += calc_value(score, random_puzzle)
+            print("Current score is: " + str(score))
+    print("You earned %d points" % score)
+
+
+if __name__ == '__main__':
+    main()
