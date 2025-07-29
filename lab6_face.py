@@ -106,4 +106,4 @@ def main():
     win.getMouse()
     win.close()
 if __name__ == "__main__":
-    main()r
+    main()
