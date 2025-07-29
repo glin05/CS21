@@ -1,0 +1,197 @@
+"""
+A one-player version of the game Wheel of Fortune. The player starts with $0 at
+at the beginning and a phrase is displayed with letters hidden. In each turn
+the player will spin the whell, guess the phrase, or quit the game. Once the
+player guesses all of the letters in the phrase, they will still have to "guess"
+the answer before the game quits.
+
+Author: Gina Lin
+Date: 02/24/2025
+Lecture section (delete the two that do not apply): 8:30 
+Lab section (delete the three that do not apply): T2:45 
+"""
+from utilsWheelOfFortune import *
+
+def main():
+
+    answer = choose_phrase() 
+    puzzle = init_puzzle((answer))
+    guessed = []
+    turn = 1
+    cash = 0
+    keep_playing = True
+    print("* * * * * * * * * * * * * * * * * * * *")
+    print("**************************************")
+    print("   Welcome to the Wheel of Fortune!  ")
+    print("**************************************")
+    print("* * * * * * * * * * * * * * * * * * * *") 
+
+
+    while keep_playing == True:
+        print("-------------------------------------")
+        print("Turn #" + str(turn))
+        print("\n")
+        print("Puzzle: %s" % (list_to_string(puzzle)))
+        print("\n")
+        print("You have $" + str(cash) + " in cash. What do you want to do?")
+        option = menu()
+        if option == 1: 
+            cash = do_spin_wheel(cash,puzzle, answer, guessed)
+            print("Letters guessed so far: " + list_to_string(guessed))
+            print("\n")
+        elif option == 2:
+            if do_guess_puzzle(answer, turn, cash) == True:
+                keep_playing = False
+                     
+        else:
+            keep_playing = False
+            print("Quitting...")
+            print("-------------------------------------")
+            print("You gave up after " + str(turn) + " turns.")
+        turn += 1
+
+    print("Thanks for playing!")
+    print("Answer: " + list_to_string(answer))
+
+def init_puzzle(answer):
+    
+    """
+    Parameters:
+    answer (list): characters representing the phrase to guess
+    Return (list): characters with alphabetic characters hidden
+    Side effects: None
+
+    This function has a list of characters generated from the choose_phrase 
+    function that contains the answer and generates a puzzle from the answer, 
+    but it replaces all letters (a-z) with "-".
+    """
+    puzzle = []
+    for i in range(len(answer)): 
+        if answer[i].isalpha():
+            puzzle.append("-")
+        else:
+            puzzle.append(answer[i])
+    return puzzle     
+
+def ask_for_letter():
+
+    """
+    This function has no parameters, returns an alphabetic character from user 
+    input and has no side-effects. The function keeps asking for user input 
+    until a single alpahbetic character is received. 
+    """
+    while True:
+        letter = input("Enter a letter: ")
+        if len(letter) == 1 and letter.isalpha():
+            return letter
+        else:
+            print(letter + " is invalid. Try again.")
+
+def update_puzzle(puzzle, letter, answer):
+
+    """
+    Parameters:
+    puzzle (list): the current state of the puzzle
+    letter (str): the character to update the puzzle with
+    answer (list): the answer to the puzzle
+    Return: (int): a count of the number of times the letter appeared in the 
+    answer
+    Side effects: puzzle will be changed to show letter, if letter exists in the 
+    answer
+    
+    This function updates the puzzle, which is a list, to show the input letter.
+    If the letter is incorrect the list isn't updated.
+    """
+    input_letter = 0 
+    for i in range(len(answer)):
+        if answer[i] == letter:
+            puzzle[i]= letter
+            input_letter += 1
+    print("\n")
+    print("The letter " + letter + " appeared " + str(input_letter) + " times")
+    print("Puzzle: " + list_to_string(puzzle))
+    return input_letter 
+
+
+def do_spin_wheel(money, puzzle, answer, guessed):
+
+    """
+    Parameters:
+    money (int): current total won by the player
+    puzzle (list): current puzzle state
+    answer (list): the puzzle answer
+    guessed (list): all of the letters guessed so far
+    
+    Return (int): the new total amount. $0 if the user goes bankrupt. 
+    Otherwise, the old total + cash won
+    
+    Side effects:
+    prints result of spin
+    guessed list is updated with new guess
+    phrase may be updated if player correctly guesses a letter
+
+    The function returns the new total amount which is old total + new cash. If 
+    the user becomes bankrupt it returns $0.The side effects are printing 
+    results of spin, gussed list is updated with new guess, and phrase can be 
+    updated with correct letter guess from player. 
+
+    This function returns a dollar quanitty or -1 is player goes bankrupt. 
+    If the spin lands on cash amount, the player choice is obtained.
+    If the letter chosen is correct, the puzzle will be updated and cash will
+    be calculated and added to the total. If the answer was already guessed 
+    and error message will show.
+    """    
+    spin = spin_wheel()
+    if spin == -1: 
+        print("\n")
+        print("The wheel spin land on BANKRUPT")
+        money = 0
+        return money
+    else:
+        new_guess = ask_for_letter()
+
+        if new_guess in guessed:
+            print("\n")
+            print("Already guessed. Try again.")
+            guessed.append(new_guess) 
+            return money
+        else: 
+            count = update_puzzle(puzzle, new_guess, answer)
+            cash_won = count * spin
+            money += cash_won
+            print("\n")
+            print("The wheel spin lands on $" + str(cash_won))
+            guessed.append(new_guess) 
+            return money
+
+        
+
+def do_guess_puzzle(answer, turn, cash):
+
+    """
+    Parameters:
+    answer (list): the answer to the puzzle
+    turn (int): player's current turn number
+    cash (int): player's  current money total
+    Return (bool): True if the player guesses correctly; False otherwise
+
+    Side effects: If the player is correct, prints a summary message about 
+    the number of turns taken and the total cash won, otherwise prints a 
+    message telling them their guess was incorrect
+    This function will compare user phrase with answer and return true is
+    it matches and false is it doesn't.
+    """
+    resp = input("Guess the phrase: ") 
+    
+    if resp == list_to_string(answer):
+        print("That is correct! ")
+        print("-------------------------------------")
+        print("You solved the puzzle after " +  str(turn) + " turns and with $" 
+        + str(cash) + " cash!")
+        return True
+    else:
+        print("Your response is incorrect! ")
+        print("-------------------------------------")
+        return False
+    
+main()
